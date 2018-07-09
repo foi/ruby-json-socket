@@ -1,5 +1,6 @@
 require "socket"
 require "yajl"
+require 'fileutils'
 
 module JSONSocket
   class Server
@@ -8,6 +9,7 @@ module JSONSocket
       @delimeter = delimeter
       @stop = false
       @server = if unix_socket
+                  FileUtils.rm_f(unix_socket)
                   UNIXServer.new unix_socket
                 else
                   TCPServer.new host, port
