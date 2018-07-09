@@ -1,6 +1,6 @@
 # ruby json-socket [![Build Status](https://travis-ci.org/foi/ruby-json-socket.svg?branch=master)](https://travis-ci.org/foi/ruby-json-socket)
 
-JSON-socket client & server implementation. Inspired by and compatible with  [sebastianseilund/node-json-socket](https://github.com/sebastianseilund/node-json-socket/)
+JSON-socket client & server implementation. Inspired by and compatible with  [sebastianseilund/node-json-socket](https://github.com/sebastianseilund/node-json-socket/) and [crystal json-socket](https://github.com/foi/crystal-json-socket)
 
 [Oj](https://github.com/ohler55/oj) is used for encoding/parsing json.
 
