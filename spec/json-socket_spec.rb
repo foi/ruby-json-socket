@@ -5,7 +5,6 @@ describe "JSONSocket::Server, JSONSocket::Client" do
     class CustomJSONSocketServer < JSONSocket::Server
 
       def on_message(message, client)
-        puts message
         self.send_end_message(message, client)
         @stop = true
       end
@@ -33,14 +32,14 @@ describe "JSONSocket::Server, JSONSocket::Client" do
     thread.exit
   end
 
-  it "Send & receive via unix_socket with custom ascii delimeter" do
-    server = CustomJSONSocketServer.new(unix_socket: "./tmp.sock", delimeter: "µ")
-    thread = Thread.new { server.listen }
-    #server.listen
-    to_server = JSONSocket::Client.new(unix_socket: "./tmp.sock", delimeter: "µ")
-    result = to_server.send({ "status" => "OK" })
-    expect(result).to eq({ "status" => "OK" })
-    thread.exit
-  end
+  # it "Send & receive via unix_socket with custom ascii delimeter" do
+  #   server = CustomJSONSocketServer.new(unix_socket: "./tmp.sock", delimeter: "µ")
+  #   thread = Thread.new { server.listen }
+  #   #server.listen
+  #   to_server = JSONSocket::Client.new(unix_socket: "./tmp.sock", delimeter: "µ")
+  #   result = to_server.send({ "status" => "OK" })
+  #   expect(result).to eq({ "status" => "OK" })
+  #   thread.exit
+  # end
 
 end
