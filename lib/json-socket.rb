@@ -1,9 +1,25 @@
 require "socket"
-require "yajl"
-require 'fileutils'
+require "fileutils"
+require "oj"
 
 module JSONSocket
+
+  module JsonEncodeDecode
+
+    def parse_json(string)
+      return Oj.load(string)
+    end
+
+    def encode_json(object)
+      return Oj.dump(object)
+    end
+
+  end
+
+
   class Server
+
+    include JsonEncodeDecode
 
     def initialize(host: "127.0.0.1", port: 1234, delimeter: "#", unix_socket: nil)
       @delimeter = delimeter
@@ -24,8 +40,10 @@ module JSONSocket
       loop do
         Thread.start(@server.accept) do |client|
           begin
+            # https://stackoverflow.com/questions/25303943/how-to-send-a-utf-8-encoded-strings-via-tcpsocket-in-ruby/25305256
+            client.set_encoding 'UTF-8'
             message_length = client.gets(@delimeter).to_i
-            on_message(Yajl::Parser.parse(client.read(message_length)), client)
+            on_message(parse_json(client.read(message_length)), client)
           rescue Exception => e
             STDERR.puts e.message
           end
@@ -49,7 +67,8 @@ module JSONSocket
     end
 
     def send_end_message(message, client)
-      strigified = Yajl::Encoder.encode(message)
+      client.set_encoding 'UTF-8'
+      strigified = encode_json(message)
       client << "#{strigified.bytesize}#{@delimeter}#{strigified}"
       client.close
     end
@@ -57,6 +76,9 @@ module JSONSocket
   end
 
   class Client
+
+    include JsonEncodeDecode
+
     def initialize(host: "127.0.0.1", port: 1234, delimeter: "#", unix_socket: nil)
       @delimeter = delimeter
       @unix_socket = unix_socket
@@ -65,10 +87,11 @@ module JSONSocket
     end
 
     def handle_send_receive(socket, message)
-      strigified = Yajl::Encoder.encode(message)
+      socket.set_encoding 'UTF-8'
+      strigified = encode_json(message)
       socket << "#{strigified.bytesize}#{@delimeter}#{strigified}"
       message_length = socket.gets(@delimeter).to_i
-      return Yajl::Parser.parse(socket.read(message_length))
+      return parse_json(socket.read(message_length))
     end
 
     def send(message)

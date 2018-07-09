@@ -9,6 +9,6 @@ Gem::Specification.new do |s|
   s.files       = ["lib/json-socket.rb"]
   s.homepage    = 'https://github.com/foi/ruby-json-socket'
   s.license     = 'MIT'
-  s.add_runtime_dependency "yajl-ruby"
+  s.add_runtime_dependency "oj"
   s.add_development_dependency "rspec"
 end
