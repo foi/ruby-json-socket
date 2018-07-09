@@ -2,6 +2,8 @@
 
 JSON-socket client & server implementation. Inspired by and compatible with  [sebastianseilund/node-json-socket](https://github.com/sebastianseilund/node-json-socket/)
 
+[Oj](https://github.com/ohler55/oj) is used for encoding/parsing json.
+
 ## Installation
 
 ```
@@ -17,6 +19,33 @@ gem 'json-socket'
 server.rb
 
 ```
+require "json-socket"
+
+class CustomJSONSocketServer < JSONSocket::Server
+
+  def on_message(message, client)
+   puts message
+   result = message["a"] + message["b"]
+   self.send_end_message({ :result => result }, client)
+  end
+end
+
+server = CustomJSONSocketServer.new(host: "localhost", port: 1234, delimeter: "ц") # OR via unix socket CustomJSONSocketServer.new(unix_socket: "/tmp/s.sock", delimeter: "ц")
+server.listen
 ```
 
 client.rb
+
+```
+require "json-socket"
+
+to_server = JSONSocket::Client.new(host: "localhost", port: 1234, delimeter: "ц") # OR via unix socket CustomJSONSocketServer.new(unix_socket: "/tmp/s.sock", delimeter: "ц")
+server.listen
+
+10.times do |i|
+
+  result = to_server.send({ "a" => i, "b" => i + 10 })
+  p result
+
+end
+```
