@@ -9,6 +9,13 @@ describe "JSONSocket::Server, JSONSocket::Client" do
         @stop = true
       end
     end
+
+    class CalcJSONSocketServer < JSONSocket::Server
+
+      def on_message(message, client)
+        self.send_end_message({ :result => message["a"] + message["b"]}, client)
+      end
+    end
   end
 
   it "Send & receive via tcp" do
@@ -57,11 +64,24 @@ describe "JSONSocket::Server, JSONSocket::Client" do
   end
 
   it "Send & receive via unix_socket with custom unicode delimeter" do
-    server = CustomJSONSocketServer.new(unix_socket: "./tmp.sock", delimeter: "Ћ")
+    server = CustomJSONSocketServer.new(unix_socket: "./tmp.sock", delimeter: "й")
     thread = Thread.new { server.listen }
-    to_server = JSONSocket::Client.new(unix_socket: "./tmp.sock", delimeter: "Ћ")
+    to_server = JSONSocket::Client.new(unix_socket: "./tmp.sock", delimeter: "й")
     result = to_server.send({ "status" => "OK" })
     expect(result).to eq({ "status" => "OK" })
+    thread.exit
+  end
+
+  it "multiple queries to server via tcp socket" do
+    calc_server = CalcJSONSocketServer.new(unix_socket: "./tmp.sock", delimeter: "|")
+    thread = Thread.new { calc_server.listen }
+    to_server = JSONSocket::Client.new(unix_socket: "./tmp.sock", delimeter: "|")
+    sum = 0
+    5.times do
+      result = to_server.send({ a: 1, b: 2 })
+      sum = sum + result["result"]
+    end
+    expect(sum).to eq(15)
     thread.exit
   end
 

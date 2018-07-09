@@ -2,6 +2,8 @@ require "socket"
 require "fileutils"
 require "oj"
 
+Oj.default_options = { :mode => :strict }
+
 module JSONSocket
 
   module JsonEncodeDecode
@@ -21,7 +23,8 @@ module JSONSocket
 
     include JsonEncodeDecode
 
-    def initialize(host: "127.0.0.1", port: 1234, delimeter: "#", unix_socket: nil)
+    def initialize(host: "127.0.0.1", port: 1234, delimeter: "#", unix_socket: nil, oj_options: nil)
+      Oj.default_options = oj_options if oj_options
       @delimeter = delimeter
       @stop = false
       @server = if unix_socket
@@ -79,7 +82,8 @@ module JSONSocket
 
     include JsonEncodeDecode
 
-    def initialize(host: "127.0.0.1", port: 1234, delimeter: "#", unix_socket: nil)
+    def initialize(host: "127.0.0.1", port: 1234, delimeter: "#", unix_socket: nil, oj_options: nil)
+      Oj.default_options = oj_options if oj_options
       @delimeter = delimeter
       @unix_socket = unix_socket
       @host = host
