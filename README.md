@@ -10,7 +10,7 @@ JSON-socket client & server implementation. Inspired by and compatible with  [se
 gem install json-socket
 ```
 or in Bundler
-```
+```ruby
 gem 'json-socket'
 ```
 
@@ -18,7 +18,7 @@ gem 'json-socket'
 
 server.rb
 
-```
+```ruby
 require "json-socket"
 
 class CustomJSONSocketServer < JSONSocket::Server
@@ -36,7 +36,7 @@ server.listen
 
 client.rb
 
-```
+```ruby
 require "json-socket"
 
 to_server = JSONSocket::Client.new(host: "localhost", port: 1234, delimeter: "ц") # OR via unix socket CustomJSONSocketServer.new(unix_socket: "/tmp/s.sock", delimeter: "ц")
