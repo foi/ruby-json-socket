@@ -1,7 +1,7 @@
 Gem::Specification.new do |s|
   s.name        = 'json-socket'
-  s.version     = '1.0.2'
-  s.date        = '2018-07-09'
+  s.version     = '1.0.3'
+  s.date        = '2018-08-03'
   s.summary     = "json-socket protocol implementation"
   s.description = "JSON-socket client & server implementation. Inspired by and compatible with sebastianseilund/node-json-socket"
   s.authors     = ["foi"]

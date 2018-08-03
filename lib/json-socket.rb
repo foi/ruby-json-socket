@@ -18,7 +18,6 @@ module JSONSocket
 
   end
 
-
   class Server
 
     include JsonEncodeDecode
@@ -96,14 +95,16 @@ module JSONSocket
       socket << "#{strigified.bytesize}#{@delimeter}#{strigified}"
       message_length = socket.gets(@delimeter).to_i
       return parse_json(socket.read(message_length))
+    ensure
+      socket.close
     end
 
     def send(message)
       begin
         if @unix_socket
-          UNIXSocket.open(@unix_socket) {| socket| handle_send_receive(socket, message) }
+          UNIXSocket.open(@unix_socket) {|socket| handle_send_receive(socket, message) }
         else
-          TCPSocket.open(@host, @port) {| socket| handle_send_receive(socket, message) }
+          TCPSocket.open(@host, @port) {|socket| handle_send_receive(socket, message) }
         end
       rescue Exception => e
         STDERR.puts e
