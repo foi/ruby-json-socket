@@ -24,9 +24,9 @@ require "json-socket"
 class CustomJSONSocketServer < JSONSocket::Server
 
   def on_message(message, client)
-   puts message
-   result = message["a"] + message["b"]
-   self.send_end_message({ :result => result }, client)
+    puts message
+    result = message["a"] + message["b"]
+    self.send_end_message({ :result => result }, client)
   end
 end
 
@@ -43,9 +43,7 @@ to_server = JSONSocket::Client.new(host: "localhost", port: 1234, delimeter: "ц
 server.listen
 
 10.times do |i|
-
   result = to_server.send({ "a" => i, "b" => i + 10 })
   p result
-
 end
 ```
