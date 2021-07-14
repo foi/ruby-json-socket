@@ -1,4 +1,4 @@
-# ruby json-socket [![Build Status](https://travis-ci.org/foi/ruby-json-socket.svg?branch=master)](https://travis-ci.org/foi/ruby-json-socket)
+# ruby json-socket [![.github/workflows/ci.yml](https://github.com/foi/ruby-json-socket/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/foi/ruby-json-socket/actions/workflows/ci.yml)
 
 JSON-socket client & server implementation. Inspired by and compatible with  [sebastianseilund/node-json-socket](https://github.com/sebastianseilund/node-json-socket/) and [crystal json-socket](https://github.com/foi/crystal-json-socket)
 
