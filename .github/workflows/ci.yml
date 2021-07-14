@@ -6,7 +6,7 @@ jobs:
   test:
     strategy:
       matrix:
-        ruby: [ 2.5, 2.6, 2.7, '3.0', head ]
+        ruby: [ 2.5, 2.6, 2.7, '3.0' ]
         os: [ubuntu-latest, macos-latest]
     runs-on: ${{ matrix.os }}
     name: ${{ matrix.ruby }} test
@@ -15,5 +15,4 @@ jobs:
       - uses: actions/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby }}
-          bundler-cache: true
       - run: rspec
