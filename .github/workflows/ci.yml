@@ -9,11 +9,11 @@ jobs:
         ruby: [ 2.5, 2.6, 2.7, '3.0' ]
         os: [ubuntu-latest, macos-latest]
     runs-on: ${{ matrix.os }}
-    name: ${{ matrix.ruby }} test
+    name: ${{ matrix.os }} ${{ matrix.ruby }} test
     steps:
       - uses: actions/checkout@v2
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby }}
           bundler-cache: true
-      - run: bundle install && rspec
+      - run: bundle exec rspec
