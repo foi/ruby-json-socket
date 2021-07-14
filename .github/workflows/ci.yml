@@ -16,4 +16,4 @@ jobs:
         with:
           ruby-version: ${{ matrix.ruby }}
           bundler-cache: true
-      - run: rspec
+      - run: bundle install && rspec
