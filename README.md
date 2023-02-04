@@ -28,6 +28,10 @@ class CustomJSONSocketServer < JSONSocket::Server
     result = message["a"] + message["b"]
     self.send_end_message({ :result => result }, client)
   end
+
+  def on_error e
+    STDERR.puts "Error: #{e.message}"
+  end
 end
 
 server = CustomJSONSocketServer.new(host: "localhost", port: 1234, delimeter: "ц") # OR via unix socket CustomJSONSocketServer.new(unix_socket: "/tmp/s.sock", delimeter: "ц")
@@ -40,7 +44,6 @@ client.rb
 require "json-socket"
 
 to_server = JSONSocket::Client.new(host: "localhost", port: 1234, delimeter: "ц") # OR via unix socket CustomJSONSocketServer.new(unix_socket: "/tmp/s.sock", delimeter: "ц")
-server.listen
 
 10.times do |i|
   result = to_server.send({ "a" => i, "b" => i + 10 })

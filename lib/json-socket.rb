@@ -47,11 +47,15 @@ module JSONSocket
             message_length = client.gets(@delimeter).to_i
             on_message(parse_json(client.read(message_length)), client)
           rescue Exception => e
-            STDERR.puts e.message
+           on_error e
           end
         end
         break if @stop
       end
+    end
+
+    def on_error e
+      STDERR.puts e.message
     end
 
     def on_message(message, client)
