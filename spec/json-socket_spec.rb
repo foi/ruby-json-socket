@@ -104,16 +104,11 @@ describe "JSONSocket::Server, JSONSocket::Client" do
   #     to_server = JSONSocket::Client.new(host: "127.0.0.1", port: 1343, delimeter: "|")
   #     sum = 0
   #     5.times do |i|
-  #       p i
-  #       sleep 1
   #       result = to_server.send({ a: 1, b: 2 })
-  #       p result
   #       sum = sum + result["result"]
   #     end
   #     expect(sum).to eq(15)
   #     thread.exit
-  #   else
-  #     puts 9999
   #   end
   # end
 

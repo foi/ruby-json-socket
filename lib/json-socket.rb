@@ -32,7 +32,7 @@ module JSONSocket
                   FileUtils.rm_f(unix_socket)
                   Async::IO::UNIXServer.wrap(unix_socket)
                 else
-                  Async::IO::Endpoint.parse(ARGV.pop || "tcp://#{host}:#{port}")
+                  Async::IO::Endpoint.tcp(host, port)
                 end
     end
 
@@ -107,6 +107,7 @@ module JSONSocket
       p "send handle_send_receive #{socket.inspect}"
       socket << "#{strigified.bytesize}#{@delimeter}#{strigified}"
       p "handle_send_receive #{socket.inspect}"
+      p "#{socket.methods}"
       message_length = socket.gets(@delimeter).to_i
       p "handle_send_receive afetr message length #{socket.inspect}"
       return parse_json(socket.read(message_length))
