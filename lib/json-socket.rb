@@ -1,6 +1,8 @@
-require "socket"
+# require "socket"
 require "fileutils"
 require "oj"
+require "async/io"
+require 'async/io/unix_socket'
 
 Oj.default_options = { :mode => :strict }
 
@@ -28,9 +30,9 @@ module JSONSocket
       @stop = false
       @server = if unix_socket
                   FileUtils.rm_f(unix_socket)
-                  UNIXServer.new unix_socket
+                  Async::IO::UNIXServer.wrap(unix_socket)
                 else
-                  TCPServer.new host, port
+                  Async::IO::Endpoint.parse(ARGV.pop || "tcp://#{host}:#{port}")
                 end
     end
 
@@ -39,18 +41,23 @@ module JSONSocket
     end
 
     def listen
-      loop do
-        Thread.start(@server.accept) do |client|
-          begin
-            # https://stackoverflow.com/questions/25303943/how-to-send-a-utf-8-encoded-strings-via-tcpsocket-in-ruby/25305256
-            client.set_encoding 'UTF-8'
-            message_length = client.gets(@delimeter).to_i
+      Async do |task|
+        p "task #{task.inspect}"
+        begin
+        @server.accept do |client|
+          puts "server accept #{client.inspect}"
+          client = client.set_encoding 'UTF-8'
+          # https://stackoverflow.com/questions/25303943/how-to-send-a-utf-8-encoded-strings-via-tcpsocket-in-ruby/25305256
+          message_length = client.gets(@delimeter).to_i
+          unless message_length == 0
             on_message(parse_json(client.read(message_length)), client)
-          rescue Exception => e
-            on_error e
+          else
+            client.close
           end
         end
-        break if @stop
+        rescue Exception => e
+          on_error e
+        end
       end
     end
 
@@ -77,6 +84,7 @@ module JSONSocket
       strigified = encode_json(message)
       client << "#{strigified.bytesize}#{@delimeter}#{strigified}"
       client.close
+      p "send_end_message #{client.inspect}"
     end
 
   end
@@ -96,11 +104,16 @@ module JSONSocket
     def handle_send_receive(socket, message)
       socket.set_encoding 'UTF-8'
       strigified = encode_json(message)
+      p "send handle_send_receive #{socket.inspect}"
       socket << "#{strigified.bytesize}#{@delimeter}#{strigified}"
+      p "handle_send_receive #{socket.inspect}"
       message_length = socket.gets(@delimeter).to_i
+      p "handle_send_receive afetr message length #{socket.inspect}"
       return parse_json(socket.read(message_length))
     ensure
+      p "client ensure #{socket.inspect}"
       socket.close
+      p "client after ensure #{socket.inspect}"
     end
 
     def send(message)
