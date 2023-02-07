@@ -1,6 +1,6 @@
 # ruby json-socket [![.github/workflows/ci.yml](https://github.com/foi/ruby-json-socket/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/foi/ruby-json-socket/actions/workflows/ci.yml)
 
-JSON-socket client & server implementation. Inspired by and compatible with  [sebastianseilund/node-json-socket](https://github.com/sebastianseilund/node-json-socket/) and [crystal json-socket](https://github.com/foi/crystal-json-socket)
+JSON-socket client & server implementation based on [https://github.com/socketry/async-io](https://github.com/socketry/async-io). Inspired by and compatible with  [sebastianseilund/node-json-socket](https://github.com/sebastianseilund/node-json-socket/) and [crystal json-socket](https://github.com/foi/crystal-json-socket)
 
 [Oj](https://github.com/ohler55/oj) is used for encoding/parsing json.
 
