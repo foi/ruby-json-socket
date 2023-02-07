@@ -1,6 +1,8 @@
-require "socket"
+# require "socket"
 require "fileutils"
 require "oj"
+require "async/io"
+require 'async/io/unix_endpoint'
 
 Oj.default_options = { :mode => :strict }
 
@@ -25,32 +27,30 @@ module JSONSocket
     def initialize(host: "127.0.0.1", port: 1234, delimeter: "#", unix_socket: nil, oj_options: nil)
       Oj.default_options = oj_options if oj_options
       @delimeter = delimeter
-      @stop = false
       @server = if unix_socket
                   FileUtils.rm_f(unix_socket)
-                  UNIXServer.new unix_socket
+                  Async::IO::Endpoint.unix(unix_socket)
                 else
-                  TCPServer.new host, port
+                  Async::IO::Endpoint.tcp(host, port)
                 end
     end
 
-    def stop
-      @stop = true
-    end
-
     def listen
-      loop do
-        Thread.start(@server.accept) do |client|
-          begin
-            # https://stackoverflow.com/questions/25303943/how-to-send-a-utf-8-encoded-strings-via-tcpsocket-in-ruby/25305256
-            client.set_encoding 'UTF-8'
-            message_length = client.gets(@delimeter).to_i
+      Async do |task|
+        begin
+        @server.accept do |client|
+          client = client.set_encoding 'UTF-8'
+          # https://stackoverflow.com/questions/25303943/how-to-send-a-utf-8-encoded-strings-via-tcpsocket-in-ruby/25305256
+          message_length = client.gets(@delimeter).to_i
+          unless message_length == 0
             on_message(parse_json(client.read(message_length)), client)
-          rescue Exception => e
-            on_error e
+          else
+            client.close
           end
         end
-        break if @stop
+        rescue Exception => e
+          on_error e
+        end
       end
     end
 
@@ -104,14 +104,10 @@ module JSONSocket
     end
 
     def send(message)
-      begin
-        if @unix_socket
-          UNIXSocket.open(@unix_socket) {|socket| handle_send_receive(socket, message) }
-        else
-          TCPSocket.open(@host, @port) {|socket| handle_send_receive(socket, message) }
-        end
-      rescue Exception => e
-        STDERR.puts e
+      if @unix_socket
+        UNIXSocket.open(@unix_socket) {|socket| handle_send_receive(socket, message) }
+      else
+        TCPSocket.open(@host, @port) {|socket| handle_send_receive(socket, message) }
       end
     end
 
