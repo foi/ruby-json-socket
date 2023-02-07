@@ -1,5 +1,6 @@
 require "./lib/json-socket.rb"
 require "socket"
+require "timeout"
 
 def is_port_open?(host, port, timeout = 0.5, sleep_period = 0.5)
   begin
