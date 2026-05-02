@@ -1,7 +1,7 @@
 Gem::Specification.new do |s|
   s.name        = 'json-socket'
-  s.version     = '2.0.0'
-  s.date        = '2023-02-07'
+  s.version     = '2.0.1'
+  s.date        = '2026-05-02'
   s.summary     = "json-socket protocol implementation"
   s.description = "JSON-socket client & server implementation based on async-io. Inspired by and compatible with sebastianseilund/node-json-socket"
   s.authors     = ["foi"]
@@ -12,4 +12,5 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency "oj"
   s.add_runtime_dependency "async-io"
   s.add_development_dependency "rspec"
+  s.required_ruby_version = '~> 3.0'
 end
